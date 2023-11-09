@@ -16,6 +16,11 @@ directory_path = r"D:\SpecialTopicProject1\resources"
 st.title("Stock Price Dashboard")
 period = st.sidebar.text_input('Period')
 
+
+priceDeflection = st.sidebar.number_input('deflection',min_value=-0.05, max_value=0.05)
+
+
+
 url = 'https://yfinance-stock-market-data.p.rapidapi.com/price'
 headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
@@ -74,11 +79,15 @@ def calculatepricechange(prices):
 # Calculate price difference
 selected_column['PriceDifference'] =  calculatepricechange(data[['Closing Price']])
 
-# Plot the scatter chart for merged_data
-fig = px.scatter(selected_column, x='Date', y='PriceDifference', title=ticker)
+
+if int(priceDeflection)>-0.05 or int(priceDeflection)<0.05:
+    result = selected_column[selected_column['PriceDifference'] > priceDeflection][['Date', 'PriceDifference']]
+    fig = px.scatter(result, x='Date', y='PriceDifference', title=ticker)
+    st.write(fig)
+else:
+    print("something wrong")
 
 fig1 = px.line(selected_column, x=selected_column['Date'], y = data['Closing Price'], title=ticker)
 st.write(fig1)
 
-st.write(fig)
 
