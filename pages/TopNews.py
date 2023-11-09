@@ -6,7 +6,7 @@ import plotly.express as px
 url = 'https://yfinance-stock-market-data.p.rapidapi.com/news'
 headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
-    'X-RapidAPI-Key': '68c481dc34msh9d4aa1fbf0b453fp1d5ab1jsn020820feca65',
+    'X-RapidAPI-Key': 'fda283bdf9mshf6a6fc0eb76274cp193063jsnf0981bc9a1d4',
     'X-RapidAPI-Host': 'yfinance-stock-market-data.p.rapidapi.com'
 }
 

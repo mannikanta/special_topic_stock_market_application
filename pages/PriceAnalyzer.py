@@ -19,7 +19,7 @@ period = st.sidebar.text_input('Period')
 url = 'https://yfinance-stock-market-data.p.rapidapi.com/price'
 headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
-    'X-RapidAPI-Key': '68c481dc34msh9d4aa1fbf0b453fp1d5ab1jsn020820feca65',
+    'X-RapidAPI-Key': 'fda283bdf9mshf6a6fc0eb76274cp193063jsnf0981bc9a1d4',
     'X-RapidAPI-Host': 'yfinance-stock-market-data.p.rapidapi.com'
 }
 
@@ -37,7 +37,6 @@ data_list = []
 
 if data_length:
     for item in data_length:
-
         # Create a dictionary with the data
         child_attributes = {
             "Closing Price": item.get("Close", None),
@@ -62,53 +61,24 @@ df.to_excel(excel_file_path, index=False)
 # Provide a message indicating the file was saved successfully
 st.write(f"Excel file saved at: {excel_file_path}")
 
-
 data = pd.read_excel(r'D:\SpecialTopicProject1\resources\stock_data.xlsx')
 
 # Select the 'Date' and 'Closing Price' columns
 selected_column = data[['Date', 'Closing Price']]
-# # print("=====================================================")
-# # print(selected_column.dtypes)
-# # print("=====================================================")
-# # Convert the 'Date' column to a pandas DatetimeIndex
-# # selected_column['Date'] = selected_column['Date'].apply(
-# #      lambda timestamp: pd.to_datetime(datetime.datetime.fromtimestamp(timestamp / 1e3)).strftime('%Y-%m-%d')
-# #     # lambda timestamp: pd.to_datetime(datetime.datetime.fromtimestamp(timestamp / 1e3),unit='s')
-# # )
-selected_column.set_index(selected_column['Date'], inplace=True)
+# selected_column.set_index(selected_column['Date'], inplace=True)
 selected_column['Date'] = pd.to_datetime(selected_column['Date']/ 1000,unit='s')
-selected_column['Date'] = pd.DatetimeIndex(selected_column['Date'])
 
-# # print("=====================================================")
-# # print(selected_column.dtypes)
-# # print("=====================================================")
-# #
-# #
-# # quantile_detector = QuantileAD(low=0.01, high=0.99)
-# # anomalies = quantile_detector.fit_detect(selected_column['Date'])
-# # plot(selected_column, anomaly= anomalies, anomaly_color= "red",anomaly_tag="Marker")
-# # plt.show()
-#
-#
-# Fit an Isolation Forest model
-clf = IsolationForest(contamination=0.05, random_state=0)  # You can adjust the contamination parameter
-selected_column['anomaly_score'] = clf.fit_predict(selected_column[['Closing Price']])
-print(selected_column)
-#
-# # Create a scatter plot to visualize anomalies
-# plt.figure(figsize=(12, 6))
-# plt.scatter(selected_column['Date'], selected_column['Closing Price'], c=selected_column['anomaly_score'], cmap='viridis')
-# plt.xlabel('Date')
-# plt.ylabel('Closing Price')
-# plt.title('Anomaly Detection using Isolation Forest')
-# plt.colorbar()
-# plt.show()
-#
-# # fig = px.line(selected_column, x=plt.xlabel('Date'), y= plt.ylabel('Closing Price'), title=ticker)
-#
-# # fig = px.line(selected_column, x=selected_column['Date'], y = selected_column['Closing Price'], title=ticker)
-# # st.plotly_chart(fig)
-#
-#
+def calculatepricechange(prices):
+    return (prices - prices.shift(1)) / prices.shift(1);
 
+# Calculate price difference
+selected_column['PriceDifference'] =  calculatepricechange(data[['Closing Price']])
+
+# Plot the scatter chart for merged_data
+fig = px.scatter(selected_column, x='Date', y='PriceDifference', title=ticker)
+
+fig1 = px.line(selected_column, x=selected_column['Date'], y = data['Closing Price'], title=ticker)
+st.write(fig1)
+
+st.write(fig)
 
