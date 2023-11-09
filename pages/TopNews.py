@@ -1,12 +1,12 @@
 import requests
 import json
-import pandas as pd, numpy as np, yfinance as yf, streamlit as st
-import plotly.express as px
+import streamlit as st
+from resources import TextAnalysis as ta
 
 url = 'https://yfinance-stock-market-data.p.rapidapi.com/news'
 headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
-    'X-RapidAPI-Key': 'fda283bdf9mshf6a6fc0eb76274cp193063jsnf0981bc9a1d4',
+    'X-RapidAPI-Key': '68c481dc34msh9d4aa1fbf0b453fp1d5ab1jsn020820feca65',
     'X-RapidAPI-Host': 'yfinance-stock-market-data.p.rapidapi.com'
 }
 
@@ -39,6 +39,10 @@ st.title("News")
 if status:
     json_data = json.loads(output)
     length = len(json_data["data"])
+    value = 0;
     for i in json_data["data"]:
         link = i["link"]
         st.write(link)
+        value += ta.sentimentAnalysisCalculation(link)
+
+    st.write("The Sentiment Analysis of all the news articles is : ",value);
