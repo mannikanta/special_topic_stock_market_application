@@ -3,11 +3,11 @@ import json
 import pandas as pd, numpy as np, yfinance as yf, streamlit as st
 import plotly.express as px
 
-url = 'https://yfinance-stock-market-data.p.rapidapi.com/stock-info'
+url = 'https://yahoo-finance15.p.rapidapi.com/api/v1/markets/stock/modules'
 headers = {
-    'Content-Type': 'application/x-www-form-urlencoded',
+    # 'Content-Type': 'application/x-www-form-urlencoded',
     'X-RapidAPI-Key': '68c481dc34msh9d4aa1fbf0b453fp1d5ab1jsn020820feca65',
-    'X-RapidAPI-Host': 'yfinance-stock-market-data.p.rapidapi.com'
+    'X-RapidAPI-Host': 'yahoo-finance15.p.rapidapi.com'
 }
 
 # ticker = st.sidebar.text_input('Ticker')
@@ -15,12 +15,10 @@ ticker = st.session_state["ticker_name"]
 print("*****************************************************************************")
 print(ticker)
 print("*****************************************************************************")
-data = {
-    'symbol': ticker
-}
+querystring = {"ticker":ticker,"module":"asset-profile"}
 
 # Send the POST request
-response = requests.post(url, headers=headers, data=data)
+response = requests.get(url, headers=headers,  params=querystring)
 output=""
 status = False
 # Check if the request was successful
@@ -39,12 +37,12 @@ else:
 st.title("About")
 if status:
     json_data = json.loads(output)
-    st.write("Company Name :   ",json_data["data"]["longName"])
-    st.write("Business Type :  ",json_data["data"]["industry"])
-    st.write("Phone Number :   ", json_data["data"]["phone"], "     Website : ", json_data["data"]["website"])
-    st.write("Business Summary :  ",json_data["data"]["longBusinessSummary"])
-    fig = px.line(output, title=ticker)
-    st.plotly_chart(fig)
+    st.write("Ticker Name :   ",ticker)
+    st.write("Business Type :  ",json_data["body"]["industry"])
+    st.write("Phone Number :   ", json_data["body"]["phone"], "     Website : ", json_data["body"]["website"])
+    st.write("Business Summary :  ",json_data["body"]["longBusinessSummary"])
+    # fig = px.line(output, title=ticker)
+    # st.plotly_chart(fig)
 else:
     st.write(output)
 
